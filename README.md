@@ -3,7 +3,7 @@
 
 ### Related paper:
 
-Tzu-Hsien Yang, Chien-Chi Liao, You-Yi Chen, Chun-Lin Hsieh, Wen-Chieh Tsai, Yan-Yuan Tseng, and Wei-Sheng Wu\*, "NoAC: an automatic builder for knowledge bases and browsers in non-model organisms", (Under Review)
+Tzu-Hsien Yang, Chien-Chi Liao, You-Yi Chen, Chun-Lin Hsieh, Wen-Chieh Tsai, Yan-Yuan Tseng, and Wei-Sheng Wu\*, "NoAC: an automatic builder for knowledge bases and browsers in non-model organisms," (Under Review)
 
 ## Start the Environment
 
@@ -34,13 +34,9 @@ to get the latest version of NoAC.
 
 4. Set up the local web service environment:
 
+
 ```
-docker run -ti -p 8000:8000 nmokbc/nmokbc /bin/bash
-
-cd /Django/NMOKBC/
-
-python manage.py runserver 0.0.0.0:8000
-
+docker run -d --restart=unless-stopped -p 8000:8000 --name NOAC nmokbc/nmokbc python /Django/NMOKBC/manage.py runserver 0.0.0.0:8000
 ```
 
 5. Visit the local *NoAC* website by entering the following sites onto the browser URL block:
@@ -48,6 +44,12 @@ python manage.py runserver 0.0.0.0:8000
 
 ```
 localhost:8000/input
+```
+
+6. If you have already built up the *NoAC* website before, use the following commands to restart the *NoAC* website:
+
+```
+docker start NOAC
 ```
 
 ## Steps to Use *NoAC*
@@ -78,6 +80,80 @@ The data processing steps may take several hours to proceed. After finishing the
 
 ## Constructed Non-model Organism Query Interfaces
 
-The constructed of a new knowledge and its query interface may take several hours. In the "Result" tab page, users can type in the existing Job IDs to link to the constructed query interfaces. And the existing knowledge base on the user's computer are also listed in this tab page.
+The construction of a new knowledge and its query interface may take several hours. In the "Result" tab page, users can type in the existing Job IDs to link to the constructed query interfaces. And the existing knowledge bases on the user's computer are also listed in this tab page.
 
 ![](img/Result.jpg)
+
+
+## How to Utilize the Constructed Query Interface
+
+
+
+![](img/Functions.jpg)
+
+### (a) Function 1: Genome Browser
+
+1. Click the scaffold name to launch the JBrowse for browsing and visualization of the locations of the genes in the selected scaffold.
+
+### (b) Function 2: Browse Gene Info
+
+1. Press the link of a genomic accession ID, and users will be directed to a JBrowse page, which visualizes the related RNA/protein isoforms of this gene. 
+
+2. Click the links in the columns of ”InterPro,” “Pfam,” “KEGG Pathways,” ”GO Terms,” and ”Interactors” for a given gene, and users will be directed to the detailed pages of the predicted information of protein domains from InterPro, protein domains from Pfam, KEEG pathways, and the genes with protein-protein-interactions, respectively.
+
+### (c) Function 3: Browse Annotation Info
+
+1. Users can investigate the annotation terms based on gene-level or transcript-level categorization. 
+
+2. Three annotation aspects (protein domain, pathway, and GO) can be poured over.
+
+
+### (d) Function 4: Tool
+
+![](img/Result.jpg)
+
+1. Search Similar Genes: key in any protein/RNA sequence of interest to identify the similar protein/RNA sequences in this non-model organism based on BLASTP/BLASTN.
+
+2. Construct Network: build up the network consisting of the physical and genetic interactions among a given gene list in the non-model organism.
+
+### (e) Function 5: Download information
+
+Download the data deposited for this knowledge base.
+
+## Some Possible Issues
+
+Here, we collect some common issues users may encounter when using NoAC:
+
+Case (1): port already in use.
+
+```
+Error response from daemon: driver failed programming external connectivity on endpoint NMOKBC (b6ca699f4826dcad781912c88f511d9c02ea0e48838c37c552a07591f65c73ff): Error starting userland proxy: listen tcp4 0.0.0.0:8000: bind: address already in use
+```
+Solution: 
+
+Change the binding port by the following comamnds:
+
+```
+docker run -d --restart=unless-stopped -p 8080:8080 --name NOAC nmokbc/nmokbc python /Django/NMOKBC/manage.py runserver 0.0.0.0:8000
+```
+
+Then, the website will be available at 
+
+```
+localhost:8080/input
+```
+
+
+Case (2): container name conflict. 
+
+```
+Error response from daemon: Conflict. The container name "/NOAC" is already in use by container "9f94a2307233aef5c66487b36a9a4ad48bab1fdfe8455fbcae61e4a2c1063dc4". You have to remove (or rename) that container to be able to reuse that name.
+```
+
+Solution: 
+
+Start the existing website with the following command.
+
+```
+docker start NOAC
+```
